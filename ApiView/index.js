@@ -1,0 +1,25 @@
+
+const views = {
+    Auth:{
+        SaveAccessToken:require('./Auth/SaveAccessToken'),
+        Verification:require('./Auth/Verification'),
+    },
+    Assistants:{
+        BotWss:require('./Assistants/BotWss'),
+    },
+    setServices: function(services){
+        Abstract.prototype.Services = services;
+    },
+};
+
+const Abstract = require('./Abstract');
+
+module.exports = function(models){
+    Abstract.prototype.Models = models;
+    Abstract.prototype.Views = views;
+    for(let iName in views.Intents) {
+        views.Intents[iName].prototype.intentName = iName;
+    }
+    return views;
+};
+
