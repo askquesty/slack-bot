@@ -8,7 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
-
+const TeamBots = {};
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
 
@@ -125,7 +125,20 @@ app.post('/api', function(req, res){
 app.get('/auth', function(req, res) {
     let view = new ApiView.Auth.SaveAccessToken(req.query);
     view.build().then(function(teamId) {
-        res.status(200).end('ok');
+        Models.TeamAccess.getByTeamId(teamId).then(function(team) {
+            TeamBots[team.team_id] = new Services.TeamBot(team);
+            TeamBots[team.team_id].init().then(function(){
+                res.status(200).end('ok');
+            }, function(err){
+                console.error('Bot Initiation Error', err);
+                res.status(500).end('err');
+            });
+
+        }).catch(function(err){
+            res.status(500).end('err');
+            console.error(err);
+        });
+
     }).catch(function(err){
         console.error(err);
         res.status(500).end();
@@ -155,13 +168,11 @@ app.post('/events', (req, res) =>{
 });
 
 // initiation bots ws
-const TeamBots = {};
 Models.TeamAccess.find({}, function (err, teams) {
     async.eachOfLimit(teams, 20, function(team, iteration, cb) {
         TeamBots[team.team_id] = new Services.TeamBot(team);
         TeamBots[team.team_id].init().then(function(){
             cb();
-
         }, function(err){
             console.error('Bot Initiation Error', err);
             cb();
