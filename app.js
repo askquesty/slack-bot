@@ -168,7 +168,7 @@ Models.TeamAccess.find({}, function (err, teams) {
         });
 
     }, function() {
-        console.error('Bots Initiated');
+        console.log('Bots Initiated');
     });
 });
 
