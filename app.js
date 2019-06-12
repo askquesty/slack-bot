@@ -4,6 +4,8 @@ const express = require('express');
 const session = require('express-session')
 const async = require('async');
 const mongoose = require('mongoose');
+const path = require('path');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -50,15 +52,11 @@ app.get('/', function(req, res){
     res.status(200).end('');
 });
 
-var path = require('path');
 app.get('/webui', function(req, res) {
     res.sendFile(path.join(__dirname, 'webui/dist/index.html'));
 });
 app.use('/js', express.static('webui/dist/js'));
 app.use('/css', express.static('webui/dist/css'));
-
-
-const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 // route for web api
