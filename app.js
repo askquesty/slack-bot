@@ -170,6 +170,11 @@ app.post('/events', (req, res) =>{
 // initiation bots ws
 Models.TeamAccess.find({}, function (err, teams) {
     async.eachOfLimit(teams, 20, function(team, iteration, cb) {
+        if(!team.team_id) {
+            cb();
+            return null;
+        }
+
         TeamBots[team.team_id] = new Services.TeamBot(team);
         TeamBots[team.team_id].init().then(function(){
             cb();

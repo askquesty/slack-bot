@@ -28,6 +28,11 @@ function SaveAccessToken(body)
             self.sendApi('oauth.access', data.form).then(function(body) {
                 // get team info
                 let team = body.data;
+
+                if(!team.team_id) {
+                    reject('team_id does not exists');
+                }
+
                 console.log('Save AccessToken for', team.team_name);
                 self.Models.TeamAccess.updateOne({
                     team_id: team.team_id
