@@ -79,6 +79,10 @@ Abstract.prototype.send = function(msg, attachments){
             message.attachments = JSON.stringify(attachments)
         }
 
+        if(!message.unfurl_links) {
+            message.unfurl_links = false;
+        }
+
         if (self.data && self.data.response_url) {
             message.replace_original = true;
             self.sendApiJson(self.data.response_url, message).then((result) => {

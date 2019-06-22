@@ -8,6 +8,10 @@ function TeamBot(team)
     let chatBot = null;
 
     function onRequest(msg) {
+        if (msg.previous_message) {
+            return null;
+        }
+
         self.Models.ChannelTickets.getTicket(msg.channel, msg.team).then(function(channelTicket) {
             if (channelTicket) {
                 self.ZendeskService.updateTicket(channelTicket.ticketId, msg.text).then(function(){
@@ -38,7 +42,6 @@ function TeamBot(team)
                     })
                 });
             }
-
         }, function(err){
             console.error(err);
         });

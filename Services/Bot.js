@@ -125,6 +125,8 @@ function Bot(team)
                 "type": "message",
                 "channel": channel,
                 "text": text,
+                "unfurl_links": false,
+                //"unfurl_media": false,
             };
 
             botRtm.send( JSON.stringify(msg), function(err){
