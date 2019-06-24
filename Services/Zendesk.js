@@ -10,7 +10,7 @@ function Zendesk()
         url:   process.env.ZENDESK_URL,
         token: process.env.ZENDESK_API_TOKEN,
         //oauth: true,
-        email: 'gooody29@gmail.com',
+        email: process.env.ZENDESK_API_EMAIL,
     });
 
     this.createTicket = function(name, workspace, text) {
@@ -43,11 +43,6 @@ function Zendesk()
             });
         });
     };
-
-
-
-
-
 }
 
 module.exports = Zendesk;
