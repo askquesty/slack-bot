@@ -30,7 +30,7 @@ function TeamBot(team)
                                     }, function(err){
                                         console.error(err);
                                     })
-                                }, parseInt(timeoutVal)*60)
+                                }, parseInt(timeoutVal)*1000)
 
                             }, function(err){
                                 console.error(err);
