@@ -8,7 +8,7 @@ function TeamBot(team)
     let chatBot = null;
 
     function onRequest(msg) {
-        if (msg.previous_message) {
+        if (msg.previous_message || msg.is_ephemeral) {
             return null;
         }
 
