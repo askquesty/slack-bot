@@ -128,7 +128,11 @@ app.get('/auth', function(req, res) {
         Models.TeamAccess.getByTeamId(teamId).then(function(team) {
             TeamBots[team.team_id] = new Services.TeamBot(team);
             TeamBots[team.team_id].init().then(function(){
-                res.status(200).end('ok');
+                //res.status(200).end('ok');
+
+                console.log(   process.env.AUTH_SUCCESS_REDIRECT_TO   );
+
+                res.redirect(process.env.AUTH_SUCCESS_REDIRECT_TO);
             }, function(err){
                 console.error('Bot Initiation Error', err);
                 res.status(500).end('err');
