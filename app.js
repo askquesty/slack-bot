@@ -164,6 +164,7 @@ app.post('/events', (req, res) =>{
         //} else {
         //    res.status(500).end();
         //}
+        res.status(500).end('ignored');
     }
 });
 
