@@ -13,17 +13,14 @@ function Bot(team)
     let botChannels = {};
 
     function newMessageProcessing(messageData) {
-
-        //console.log('001', messageData);
-        //console.log('002', 'im_created' == messageData.type);
-
         switch (true) {
             case 'message' == messageData.type:
                 self.onMessage(messageData);
                 break;
-            //case 'im_created' == messageData.type:
-            //    self.onNewIm(messageData);
-            //    break;
+            case 'im_created' == messageData.type:
+                //console.log(new Date(), messageData);
+                self.onNewIm(messageData);
+                break;
         }
     }
 
@@ -125,8 +122,7 @@ function Bot(team)
                 "type": "message",
                 "channel": channel,
                 "text": text,
-                "unfurl_links": false,
-                //"unfurl_media": false,
+                "unfurl_links": false
             };
 
             botRtm.send( JSON.stringify(msg), function(err){
@@ -138,6 +134,8 @@ function Bot(team)
             } );
         });
     };
+
+    this.onNewIm = function(msg) {};
 
     this.init = function() {
         wssCred = null;

@@ -20,8 +20,8 @@ function TeamBot(team)
                     channelTicket.save();
                 })
             } else {
-                self.Models.TeamAccess.getByTeamId(msg.team).then(function(team){
-                    self.ZendeskService.createTicket(msg.user, team.team_name, msg.text).then(function(ticketId){
+                self.Models.TeamAccess.getByTeamId(msg.team).then(function(teamDb){
+                    self.ZendeskService.createTicket(msg.user, teamDb.team_name, msg.text).then(function(ticketId){
                         self.Models.ChannelTickets.addTicket(msg.channel, msg.team, msg.user, ticketId, msg.text).then(function(){
                             self.Models.Settings.getByKey('thank-you-for-question-timeout').then(function(timeoutVal){
                                 setTimeout(function(){
@@ -48,14 +48,15 @@ function TeamBot(team)
     }
 
     this.sendInstallThankYouMessage = function(msg) {
-        self.Models.TeamAccess.getByTeamId(msg.team_id).then(function(team){
-            if (msg.authed_users.indexOf(team.bot.bot_user_id) >=0) {
+        self.Models.TeamAccess.getByTeamId(team.team_id).then(function(team){
+            //if (msg.authed_users.indexOf(team.bot.bot_user_id) >=0) {
                 self.Models.Settings.getByKey('install-thank-you-message').then(function(messageVal){
-                    chatBot.sendMessage(msg.event.channel.id, messageVal);
+                    //chatBot.sendMessage(msg.event.channel.id, messageVal);
+                    chatBot.sendMessage(msg.channel.id, messageVal);
                 }).catch(function(err){
                     console.error(err)
                 });
-            }
+            //}
         });
     };
 
@@ -87,7 +88,7 @@ function TeamBot(team)
         return new Promise(function(resolve, reject) {
             chatBot = new self.Services.Bot(team);
             chatBot.onMessage = onRequest;
-            //chatBot.onNewIm = sendInstallThankYouMessage;
+            chatBot.onNewIm = self.sendInstallThankYouMessage;
             chatBot.init().then(resolve, reject);
         });
     }
