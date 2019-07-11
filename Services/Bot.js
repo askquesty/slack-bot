@@ -116,12 +116,12 @@ function Bot(team)
         });
     }
 
-    this.sendMessage = function(channel, text) {
+    this.sendMessage = function(channel, text, user) {
         return new Promise(function(resolve, reject) {
             let msg = {
                 "type": "message",
                 "channel": channel,
-                "text": text,
+                "text": user ? text.replace(/@name/gi, ('@' == user.substr(0, 1) ? "<"+user+">" : "<@"+user+">")) : text,
                 "unfurl_links": false
             };
 

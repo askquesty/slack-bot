@@ -6,6 +6,7 @@ const views = {
     },
     Assistants:{
         BotWss:require('./Assistants/BotWss'),
+        UserInfo:require('./Assistants/UserInfo'),
     },
     setServices: function(services){
         Abstract.prototype.Services = services;

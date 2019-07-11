@@ -13,26 +13,27 @@ function Zendesk()
         email: process.env.ZENDESK_API_EMAIL,
     });
 
-    this.createTicket = function(name, workspace, text) {
+    this.createTicket = function(name, workspace, text, profile) {
         return new Promise(function(resolve, reject) {
             zendesk.tickets.create({
-                //subject:'Form:'+name+', Workspace:'+workspace,
                 subject:'Form: '+workspace,
                 priority:'urgent',
                 tags:[workspace],
                 type:'question',
                 //status:'open',
                 status:'new',
+                requester: { name: profile.display_name, email: profile.email },
                 comment: {
                     body: text
                 }
             }).then(function(result){
                 resolve(result.ticket.id);
+                //console.log('createTicket', result.ticket.id);
             });
         });
     };
 
-    this.updateTicket = function(id, text) {
+    this.updateTicket = function(id, text, profile) {
         return new Promise(function(resolve, reject) {
             zendesk.tickets.update(id, {
                 comment: {
@@ -40,6 +41,7 @@ function Zendesk()
                 }
             }).then(function(result){
                 resolve(result.ticket.id);
+                //console.log('updateTicket', result.ticket.id);
             });
         });
     };
