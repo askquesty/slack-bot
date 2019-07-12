@@ -10,11 +10,13 @@ function CheckEmail(msgOriginal, team)
     {
         return new Promise(function(resolve, reject) {
             self.Models.Settings.getByKey('approve-email-text').then(function(messageVal){
+                let text = messageVal.replace(/@name/gi, self.slackUserCode(msgOriginal.user) );
+
                 self.send({
                         token: team.access_token,
                         channel: msgOriginal.channel,
                     }, [{
-                        "title": messageVal,
+                        "title": text,
                         "callback_id": "email-approve",
                         "color": "#3AA3E3",
                         "attachment_type": "default",

@@ -8,7 +8,7 @@ function TeamBot(team)
     let chatBot = null;
 
     function onRequest(msg) {
-        if (msg.previous_message || msg.is_ephemeral || 'bot_message' == msg.subtype) {
+        if (msg.previous_message || msg.is_ephemeral || 'bot_message' == msg.subtype || (msg.attachments && msg.attachments[0] && msg.attachments[0].callback_id)) {
             return null;
         }
 

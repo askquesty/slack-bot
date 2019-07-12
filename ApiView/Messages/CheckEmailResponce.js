@@ -14,10 +14,13 @@ function CheckEmailResponce(msgOriginal)
         return new Promise(function(resolve, reject) {
             self.Models.TeamAccess.getByTeamId(msgOriginal.team.id).then(function(teamDb){
                 self.Models.Settings.getByKey('approve-email-text').then(function(messageVal){
+
+                    let text = messageVal.replace(/@name/gi, self.slackUserCode(msgOriginal.user.id) );
+
                     var message = {
                         "replace_original": true,
                         attachments: [{
-                            "title": messageVal,
+                            "title": text,
                             "text": isApproved ? 'Approved' : 'Canceled',
                         }],
                     };

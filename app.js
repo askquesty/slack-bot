@@ -186,14 +186,8 @@ app.post('/actions', urlencodedParser, (req, res) =>{
 
     switch (payload.callback_id) {
         case 'email-approve':
-
             new ApiView.Messages.CheckEmailResponce(payload).build().then(function(channelTicket) {
-
-
                 TeamBots[channelTicket.team].createTicket(channelTicket)
-                //console.log('channelTicket!!!', channelTicket);
-
-
             }).catch(function(errMsg){
                 console.error(errMsg);
             });
