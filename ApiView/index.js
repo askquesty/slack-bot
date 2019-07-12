@@ -4,6 +4,10 @@ const views = {
         SaveAccessToken:require('./Auth/SaveAccessToken'),
         Verification:require('./Auth/Verification'),
     },
+    Messages:{
+        CheckEmail:require('./Messages/CheckEmail'),
+        CheckEmailResponce:require('./Messages/CheckEmailResponce'),
+    },
     Assistants:{
         BotWss:require('./Assistants/BotWss'),
         UserInfo:require('./Assistants/UserInfo'),

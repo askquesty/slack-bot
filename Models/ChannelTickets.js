@@ -18,12 +18,17 @@ const ChannelTickets = new Schema({
     },
     ticketId: {
         type: String,
+        default: null,
         required: false,
         index: true
     },
     latestComment: {
         type: String,
-    }
+    },
+    profile: {
+        type: Object,
+    },
+    initComments: [String]
 });
 
 const model = mongoose.model('channelTickets', ChannelTickets, 'channelTickets');
@@ -63,6 +68,7 @@ model.addTicket = function (channel, team, user, ticketId, comment) {
             user:user,
             ticketId:ticketId,
             latestComment:comment,
+            initComments:[],
         },{
             upsert: true
         }, function (err, ct) {
@@ -70,7 +76,8 @@ model.addTicket = function (channel, team, user, ticketId, comment) {
                 reject(err);
                 return null;
             }
-            resolve(ct);
+            model.getTicket(channel, team).then(resolve, reject);
+            //resolve(ct);
         });
     });
 };

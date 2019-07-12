@@ -35,6 +35,14 @@
                 placeholder="Enter text"
         ></b-form-textarea>
       </b-form-group>
+
+      <b-form-group label="Text for approve email:" label-for="input-approve-email-text" >
+        <b-form-textarea
+                id="input-approve-email-text"
+                v-model="form['approve-email-text']"
+                placeholder="Enter text"
+        ></b-form-textarea>
+      </b-form-group>
     </b-form>
 
     <b-form inline>

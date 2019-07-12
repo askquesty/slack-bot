@@ -8,53 +8,79 @@ function TeamBot(team)
     let chatBot = null;
 
     function onRequest(msg) {
-        if (msg.previous_message || msg.is_ephemeral) {
+        if (msg.previous_message || msg.is_ephemeral || 'bot_message' == msg.subtype) {
             return null;
         }
 
         self.Models.TeamAccess.getByTeamId(msg.team).then(function(teamDb){
-            new self.Views.Assistants.UserInfo(msg.user, teamDb.access_token).build().then(function(userData) {
-                self.Models.ChannelTickets.getTicket(msg.channel, msg.team).then(function(channelTicket) {
-                    if (channelTicket) {
-                        self.ZendeskService.updateTicket(channelTicket.ticketId, msg.text, userData.user.profile).then(function(){
-                            //console.log('updateTicket', channelTicket.ticketId, msg.text)
-                            channelTicket.latestComment = msg.text;
+            self.Models.ChannelTickets.getTicket(msg.channel, msg.team).then(function(channelTicket) {
+                if (channelTicket && channelTicket.ticketId) {
+                    self.ZendeskService.updateTicket(channelTicket.ticketId, msg.text, channelTicket.profile).then(function(){
+                        channelTicket.latestComment = msg.text;
+                        channelTicket.save();
+                    });
+                } else {
+                    const sendMsg = function(){
+                        if (!channelTicket.initComments) {
+                            channelTicket.initComments = [];
+                        }
+
+                        channelTicket.initComments.push(msg.text);
+                        new self.Views.Messages.CheckEmail(msg, teamDb).build().then(function() {
                             channelTicket.save();
-                        })
+                        }).catch(function(errMsg){
+                            console.error(errMsg);
+                        });
+                    };
+
+                    if (channelTicket) {
+                        sendMsg();
                     } else {
-                        self.ZendeskService.createTicket(msg.user, teamDb.team_name, msg.text, userData.user.profile).then(function(ticketId){
-                            self.Models.ChannelTickets.addTicket(msg.channel, msg.team, msg.user, ticketId, msg.text).then(function(){
-                                self.Models.Settings.getByKey('thank-you-for-question-timeout').then(function(timeoutVal){
-                                    setTimeout(function(){
-                                        self.Models.Settings.getByKey('thank-you-for-question-message').then(function(messageVal){
-                                            chatBot.sendMessage(msg.channel, messageVal);
-                                        }, function(err){
-                                            console.error(err);
-                                        })
-                                    }, parseInt(timeoutVal)*1000)
-
-                                }, function(err){
-                                    console.error(err);
-                                })
-
-                            }, function(err){
-                                console.error(err);
-                            });
+                        self.Models.ChannelTickets.addTicket(msg.channel, msg.team, msg.user, null, msg.text).then(function(_channelTicket){
+                            channelTicket = _channelTicket;
+                            sendMsg();
                         }, function(err){
                             console.error(err);
                         });
                     }
-                }, function(err){
-                    console.error(err);
-                });
-            }).catch(function(err){
-                console.error('UserData Error', err);
+                }
+            }, function(err){
+                console.error(err);
             });
 
         }, function(err){
             console.error(err);
         });
     }
+
+    this.createTicket = function(channelTicket) {
+        self.Models.TeamAccess.getByTeamId(channelTicket.team).then(function(teamDb){
+            self.ZendeskService.createTicket(channelTicket, teamDb.team_name).then(function(ticketId){
+                //self.Models.ChannelTickets.addTicket(msg.channel, msg.team, msg.user, ticketId, msg.text).then(function(){
+                self.Models.Settings.getByKey('thank-you-for-question-timeout').then(function(timeoutVal){
+                    setTimeout(function(){
+                        self.Models.Settings.getByKey('thank-you-for-question-message').then(function(messageVal){
+                            chatBot.sendMessage(channelTicket.channel, messageVal, channelTicket.user);
+                        }, function(err){
+                            console.error(err);
+                        })
+                    }, parseInt(timeoutVal)*1000)
+
+                }, function(err){
+                    console.error(err);
+                })
+
+                //}, function(err){
+                //    console.error(err);
+                //});
+            }, function(err){
+                console.error(err);
+            });
+        }, function(err){
+            console.error(err);
+        });
+    };
+
 
     this.sendInstallThankYouMessage = function(msg) {
         self.Models.TeamAccess.getByTeamId(team.team_id).then(function(team){

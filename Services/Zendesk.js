@@ -1,4 +1,5 @@
 
+const async = require('async');
 const ZendeskNodeApi = require('zendesk-node-api');
 const Abstract = require('./Abstract');
 Zendesk.prototype = new Abstract();
@@ -6,6 +7,7 @@ Zendesk.prototype = new Abstract();
 
 function Zendesk()
 {
+    const self = this;
     const zendesk = new ZendeskNodeApi({
         url:   process.env.ZENDESK_URL,
         token: process.env.ZENDESK_API_TOKEN,
@@ -13,7 +15,7 @@ function Zendesk()
         email: process.env.ZENDESK_API_EMAIL,
     });
 
-    this.createTicket = function(name, workspace, text, profile) {
+    this.createTicket = function(channelTicket, workspace) {
         return new Promise(function(resolve, reject) {
             zendesk.tickets.create({
                 subject:'Form: '+workspace,
@@ -22,13 +24,31 @@ function Zendesk()
                 type:'question',
                 //status:'open',
                 status:'new',
-                requester: { name: profile.display_name, email: profile.email },
+                requester: {
+                    name: channelTicket.profile.display_name,
+                    email: channelTicket.profile.email
+                },
                 comment: {
-                    body: text
+                    body: channelTicket.initComments[0]
                 }
             }).then(function(result){
-                resolve(result.ticket.id);
-                //console.log('createTicket', result.ticket.id);
+                channelTicket.ticketId = result.ticket.id;
+                channelTicket.save();
+                async.eachOfLimit(channelTicket.initComments, 1, function(text, iteration, cb) {
+                    if (!iteration) {
+                        cb();
+                        return null;
+                    }
+
+                    self.updateTicket(channelTicket.ticketId, text, channelTicket.profile).then(cb, function(err){
+                        console.error('CreateTicket Err', err);
+                        cb();
+                    });
+                }, function() {
+                    resolve(channelTicket.ticketId);
+                    //console.log('createTicket', result.ticket.id);
+                });
+
             });
         });
     };
@@ -38,7 +58,11 @@ function Zendesk()
             zendesk.tickets.update(id, {
                 comment: {
                     body: text
-                }
+                },
+                requester: {
+                    name: profile.display_name,
+                    email: profile.email
+                },
             }).then(function(result){
                 resolve(result.ticket.id);
                 //console.log('updateTicket', result.ticket.id);

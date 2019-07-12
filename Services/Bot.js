@@ -116,7 +116,7 @@ function Bot(team)
         });
     }
 
-    this.sendMessage = function(channel, text, user) {
+    this.sendMessage = function(channel, text, user, attachments) {
         return new Promise(function(resolve, reject) {
             let msg = {
                 "type": "message",
@@ -124,6 +124,11 @@ function Bot(team)
                 "text": user ? text.replace(/@name/gi, ('@' == user.substr(0, 1) ? "<"+user+">" : "<@"+user+">")) : text,
                 "unfurl_links": false
             };
+
+            if (attachments) {
+                //msg.attachments = JSON.stringify(attachments);
+                msg.attachments = attachments;
+            }
 
             botRtm.send( JSON.stringify(msg), function(err){
                 if(err) {

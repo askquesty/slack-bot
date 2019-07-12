@@ -97,6 +97,7 @@ app.post('/api', function(req, res){
                 'thank-you-for-question-message',
                 'thank-you-for-question-timeout',
                 'admin-login',
+                'aprove-email-text',
                 'admin-pass']).then(function(data){
                 sendResults({settings:data});
             }, function(err){
@@ -146,7 +147,7 @@ app.get('/auth', function(req, res) {
     });
 });
 
-// API route for event verification
+// API route for events
 app.post('/events', (req, res) =>{
     let view = false;
     if ('url_verification' == req.body.type) {
@@ -166,6 +167,40 @@ app.post('/events', (req, res) =>{
         //}
         res.status(500).end('ignored');
     }
+});
+
+// API route for actions
+app.post('/actions', urlencodedParser, (req, res) =>{
+    if (!req.body.payload) {
+        res.status(500).end('');
+        return null;
+    }
+
+    let payload = null;
+    try {
+        payload = JSON.parse(req.body.payload);
+    }catch(e){
+        res.status(500).end('');
+        return null;
+    }
+
+    switch (payload.callback_id) {
+        case 'email-approve':
+
+            new ApiView.Messages.CheckEmailResponce(payload).build().then(function(channelTicket) {
+
+
+                TeamBots[channelTicket.team].createTicket(channelTicket)
+                //console.log('channelTicket!!!', channelTicket);
+
+
+            }).catch(function(errMsg){
+                console.error(errMsg);
+            });
+            break;
+    }
+    //console.log('payload', payload);
+    res.status(200).end();
 });
 
 // initiation bots ws
