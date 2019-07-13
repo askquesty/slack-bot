@@ -25,7 +25,7 @@ function Zendesk()
                 //status:'open',
                 status:'new',
                 requester: {
-                    name: channelTicket.profile.display_name,
+                    name: channelTicket.profile.displayName,
                     email: channelTicket.profile.email
                 },
                 comment: {
@@ -60,7 +60,7 @@ function Zendesk()
                     body: text
                 },
                 requester: {
-                    name: profile.display_name,
+                    name: profile.displayName,
                     email: profile.email
                 },
             }).then(function(result){
