@@ -33,6 +33,7 @@ function Zendesk()
                 }
             }).then(function(result){
                 channelTicket.ticketId = result.ticket.id;
+                channelTicket.profile.requesterId = result.ticket.requester_id;
                 channelTicket.save();
                 async.eachOfLimit(channelTicket.initComments, 1, function(text, iteration, cb) {
                     if (!iteration) {
@@ -57,11 +58,8 @@ function Zendesk()
         return new Promise(function(resolve, reject) {
             zendesk.tickets.update(id, {
                 comment: {
-                    body: text
-                },
-                requester: {
-                    name: profile.displayName,
-                    email: profile.email
+                    body: text,
+                    author_id: profile.requesterId
                 },
             }).then(function(result){
                 resolve(result.ticket.id);
