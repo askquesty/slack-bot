@@ -33,8 +33,10 @@ function Zendesk()
                 }
             }).then(function(result){
                 channelTicket.ticketId = result.ticket.id;
-                channelTicket.profile.requesterId = result.ticket.requester_id;
+                channelTicket.profile.requesterId = 0;
+                channelTicket.set('profile.requesterId', result.ticket.requester_id);
                 channelTicket.save();
+
                 async.eachOfLimit(channelTicket.initComments, 1, function(text, iteration, cb) {
                     if (!iteration) {
                         cb();
