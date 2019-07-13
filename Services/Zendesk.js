@@ -64,6 +64,12 @@ function Zendesk()
             }).then(function(result){
                 resolve(result.ticket.id);
                 //console.log('updateTicket', result.ticket.id);
+                
+                console.log('requester', {
+                    name: profile.displayName,
+                    email: profile.email
+                });
+                
             });
         });
     };
