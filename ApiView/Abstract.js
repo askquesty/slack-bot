@@ -98,7 +98,7 @@ Abstract.prototype.send = function(msg, attachments){
                         return;
                     }
                     console.log( 'message', message );
-                    console.error(result.data);
+                    console.error('error result', result);
                 }).catch(reject);
             };
 
