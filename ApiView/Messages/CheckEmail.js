@@ -13,8 +13,10 @@ function CheckEmail(msgOriginal, team)
                 let text = messageVal.replace(/@name/gi, self.slackUserCode(msgOriginal.user) );
 
                 self.send({
-                        token: team.access_token,
+                        //token: team.access_token,
+                        token: team.bot.bot_access_token,
                         channel: msgOriginal.channel,
+                        as_user: false,
                     }, [{
                         "title": text,
                         "callback_id": "email-approve",

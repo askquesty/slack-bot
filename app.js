@@ -97,7 +97,7 @@ app.post('/api', function(req, res){
                 'thank-you-for-question-message',
                 'thank-you-for-question-timeout',
                 'admin-login',
-                'aprove-email-text',
+                'approve-email-text',
                 'admin-pass']).then(function(data){
                 sendResults({settings:data});
             }, function(err){

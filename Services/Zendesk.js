@@ -52,7 +52,7 @@ function Zendesk()
                     //console.log('createTicket', result.ticket.id);
                 });
 
-            });
+            }, reject);
         });
     };
 

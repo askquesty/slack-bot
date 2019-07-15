@@ -68,7 +68,7 @@ function TeamBot(team)
 
                 }, function(err){
                     console.error(err);
-                })
+                });
 
                 //}, function(err){
                 //    console.error(err);

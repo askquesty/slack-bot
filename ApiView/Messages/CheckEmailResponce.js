@@ -29,7 +29,7 @@ function CheckEmailResponce(msgOriginal)
                             self.Models.ChannelTickets.getTicket(msgOriginal.channel.id, msgOriginal.team.id).then(function(channelTicket) {
                                 channelTicket.profile = {};
                                 channelTicket.profile.email = isApproved ? userData.user.profile.email : (msgOriginal.channel.id +'-'+ msgOriginal.team.id+'@askquesty.com')
-                                channelTicket.profile.displayName = userData.user.profile.display_name;
+                                channelTicket.profile.displayName = userData.user.profile.display_name || userData.user.profile.real_name || userData.user.profile.first_name || '';
                                 channelTicket.profile.emailReal = userData.user.profile.email;
                                 channelTicket.save(function (err) {
                                     if (err) return reject(err);
