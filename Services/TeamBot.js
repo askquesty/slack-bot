@@ -25,11 +25,21 @@ function TeamBot(team)
                             channelTicket.initComments = [];
                         }
 
-                        channelTicket.initComments.push(msg.text);
-                        new self.Views.Messages.CheckEmail(msg, teamDb).build().then(function() {
-                            channelTicket.save();
-                        }).catch(function(errMsg){
-                            console.error(errMsg);
+                        self.Models.Profile.getProfile(msg.team, msg.user).then(function(profile){
+                            if (profile && profile._id) {
+                                channelTicket.profile = profile;
+                                self.createTicket(channelTicket);
+                            } else {
+                                channelTicket.initComments.push(msg.text);
+                                new self.Views.Messages.CheckEmail(msg, teamDb).build().then(function() {
+                                    channelTicket.save();
+                                }).catch(function(errMsg){
+                                    console.error(errMsg);
+                                });
+                            }
+
+                        }, function(err){
+                            console.error(err);
                         });
                     };
 
