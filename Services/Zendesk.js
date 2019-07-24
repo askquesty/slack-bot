@@ -17,6 +17,7 @@ function Zendesk()
 
     this.createTicket = function(channelTicket, workspace) {
         return new Promise(function(resolve, reject) {
+            
             zendesk.tickets.create({
                 subject:'Form: '+workspace,
                 priority:'urgent',

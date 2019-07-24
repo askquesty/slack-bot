@@ -40,9 +40,11 @@ model.getProfile = function (teamId, userId) {
 model.saveProfileFromTicket  = function(ticket) {
     return new Promise(function(resolve, reject) {
         model.updateOne({
-            team: ticket.team_id,
-            user: ticket.user_id,
+            team:           ticket.team,
+            user:           ticket.user,
         },{
+            team:           ticket.team,
+            user:           ticket.user,
             email:          ticket.profile.email,
             displayName:    ticket.profile.displayName,
             emailReal:      ticket.profile.emailReal,

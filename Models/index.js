@@ -4,7 +4,7 @@ let models = {
     ChannelTickets:require('./ChannelTickets'),
     TeamAccess:require('./TeamAccess'),
     Settings:require('./Settings'),
-    //Profile:require('./Profile'),
+    Profile:require('./Profile'),
 };
 
 mongoose.Models = models;

@@ -127,6 +127,11 @@ app.get('/auth', function(req, res) {
     let view = new ApiView.Auth.SaveAccessToken(req.query);
     view.build().then(function(teamId) {
         Models.TeamAccess.getByTeamId(teamId).then(function(team) {
+            if (TeamBots[team.team_id]) {
+                res.redirect(process.env.AUTH_SUCCESS_REDIRECT_TO);
+                return null;
+            }
+            
             TeamBots[team.team_id] = new Services.TeamBot(team);
             TeamBots[team.team_id].init().then(function(){
                 res.redirect(process.env.AUTH_SUCCESS_REDIRECT_TO);

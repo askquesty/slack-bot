@@ -26,11 +26,11 @@ function TeamBot(team)
                         }
 
                         self.Models.Profile.getProfile(msg.team, msg.user).then(function(profile){
+                            channelTicket.initComments.push(msg.text);
                             if (profile && profile._id) {
                                 channelTicket.profile = profile;
                                 self.createTicket(channelTicket);
                             } else {
-                                channelTicket.initComments.push(msg.text);
                                 new self.Views.Messages.CheckEmail(msg, teamDb).build().then(function() {
                                     channelTicket.save();
                                 }).catch(function(errMsg){
