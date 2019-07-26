@@ -21,7 +21,7 @@ function Zendesk()
             zendesk.tickets.create({
                 subject:'Form: '+workspace,
                 priority:'urgent',
-                tags:[workspace],
+                tags:[workspace, 'slack'],
                 type:'question',
                 //status:'open',
                 status:'new',
